@@ -69,7 +69,13 @@ def main():
     sample = ds[args.idx]
 
     # batchify
-    batch = {k: v.unsqueeze(0) if torch.is_tensor(v) and v.ndim in (1, 2) else v for k, v in sample.items()}
+    batch = {}
+    for k, v in sample.items():
+        if torch.is_tensor(v):
+            batch[k] = v.unsqueeze(0)   # 0D/1D/2D 全部变成带 batch 维
+        else:
+            batch[k] = v
+
     # tensors to device
     for k, v in batch.items():
         if torch.is_tensor(v):
